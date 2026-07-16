@@ -32,7 +32,7 @@ export const getCartByBarcode = async (req, res) => {
             });
         }
 
-        // 6. Success: Return the item payload
+        // Success: Return the item payload
         return res.status(200).json({
             success: true,
             message: "Product found successfully.",

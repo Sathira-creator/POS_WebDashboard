@@ -118,20 +118,20 @@ export const updateInventory = async (req, res)=>{
         if (!barcode) {
             return res.status(400).json({ success: false, message: "Barcode is required to perform an update" });
         }
-        const existingItem = await Inventory.findOne({  barcode });
+        const existingItem = await Inventory.findOne({ barcode });
         if (existingItem) {
             existingItem.qty = Number(qty);
             existingItem.name = name;
             existingItem.category = category;
             existingItem.type = type;
             existingItem.price = price;
-            existingItem.supplier = supplier;
+            existingItem.supplier = supplier ;
 
             await existingItem.save();
 
             return res.json({ 
                 success: true, 
-                message: `Stock updated!`,
+                message: `Stock updated`,
                 product: existingItem 
             });
         }else{

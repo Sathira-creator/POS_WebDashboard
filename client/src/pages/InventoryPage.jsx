@@ -7,7 +7,7 @@ import { useAppContext } from '../context/AppContext';
 
 const InventoryPage = () => {
 
-    const {allProducts, setAllProducts , currentPage, setCurrentPage, totalPages, setTotalPages} = useAppContext();
+    const {allProducts, setAllProducts, currentPage, setCurrentPage, totalPages, setTotalPages} = useAppContext();
   
 
   const [isEditing, setIsEditing] = useState(false);
