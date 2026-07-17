@@ -22,6 +22,7 @@ export const AppProvider = ({ children })=>{
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [cartItems, setCartItems] = useState([]);
+    const [showCheckoutBox, setShowCheckoutBox] = useState(false);
 
     const [value1, setValue1] = useState();
     const [value2, setValue2] = useState();
@@ -81,7 +82,7 @@ export const AppProvider = ({ children })=>{
         showProfile, setShowProfile,value1, setValue1, value2, setValue2,isSignedIn, 
         setIsSignedIn, showUserLogin, setShowUserLogin, user, setUser, isOwner, setIsOwner, 
         dashboardData, setDashboardData, navigate, allProducts, setAllProducts, currentPage, setCurrentPage,
-        totalPages, setTotalPages, cartItems, setCartItems
+        totalPages, setTotalPages, cartItems, setCartItems, showCheckoutBox, setShowCheckoutBox
     }
 
     return (

@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
+import CheckoutBox from './CheckoutBox';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Cart = () => {
 
-    const{ cartItems, setCartItems } = useAppContext();
-    
-
+    const{ cartItems, setCartItems, showCheckoutBox, setShowCheckoutBox } = useAppContext();
     const [selectedId, setSelectedId] = useState(null);
+
+    const formattedItems = cartItems.map((product) => ({
+      productId: product.id, // Handles standard MongoDB object mappings smoothly
+      itemName: product.item , // Maps front-end 'item' to backend 'itemName'
+      quantity: product.quantity,
+      unitPrice: product.price,
+      discountPercentage: product.discount ? Number(product.discount) : 0
+    }));
 
     // Function to remove the selected item
     const handleRemove = () => {
@@ -14,14 +23,58 @@ const Cart = () => {
         setCartItems(cartItems.filter(item => item.id !== selectedId));
         setSelectedId(null); // Reset selection
         } else {
-        alert("Please click on a row to select an item first!");
+          toast.error("Please select an item to remove.");
         }
     };
 
-    const handleCheckout = () => {
-        const total = cartItems.reduce((acc, item) => acc + (item.quantity * item.price), 0);
-        alert(`Checking out! Total Amount: $${total.toFixed(2)}`);
+    const calculateTotal = () => {
+      return cartItems.reduce((acc, item) => {
+        const itemSubtotal = item.quantity * item.price;
+        const discountRate = item.discount ? (Number(item.discount) / 100) : 0;
+        return acc + (itemSubtotal - (itemSubtotal * discountRate));
+      }, 0);
     };
+
+    const handleCheckout = () => {
+        if (cartItems.length === 0) {
+          toast.error("Your cart is empty!");
+          return;
+        }
+        setShowCheckoutBox(true);
+        
+    };
+
+    const handleConfirmOrder = async(summaryData) => {
+      try{
+
+        const { data } = await axios.post('/api/order/create', {
+          items: formattedItems,  
+          subtotal: summaryData.subtotal, 
+          totalDiscount: summaryData.totalDiscount, 
+          netTotal: summaryData.netTotal, 
+          paymentMethod: summaryData.paymentMethod, 
+          cashReceived: summaryData.cashReceived, 
+          changeGiven: summaryData.changeDue 
+        });
+
+        if (data.success) {
+          toast.success(data.message);
+          console.log("Payment Confirmed Data:", data.order);
+          setCartItems([]); // Clear cart items layout
+
+        }else{
+          toast.error(data.message);
+
+        }
+
+      }catch(error){
+        toast.error(error.message)
+      }
+      
+    };
+
+    const currentTotal = calculateTotal();
+
   return (
     <div className="flex flex-col w-full max-w-2xl p-4 font-sans">
       
@@ -81,6 +134,13 @@ const Cart = () => {
           Remove
         </button>
       </div>
+
+      {showCheckoutBox && (
+        <CheckoutBox 
+          subtotal={currentTotal} 
+          onConfirm={handleConfirmOrder}
+        />
+      )}
     </div>
   )
 }

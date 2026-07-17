@@ -6,9 +6,10 @@ const userSchema = new mongoose.Schema({
     email: {type: String, required: true, unique: true },
     password: {type: String, required: true },
     sales: {type: Number, default: 0},
-}, 
-{minimize: false},
-{timestamps: true})
+},{
+    minimize: false,
+    timestamps: true
+})
 
 const User =  mongoose.models.user || mongoose.model('user', userSchema)
 

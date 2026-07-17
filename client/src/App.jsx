@@ -9,17 +9,18 @@ import { useAppContext } from './context/AppContext'
 import Profile from './components/Profile'
 import Login from './pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
+import CheckoutBox from './components/CheckoutBox'
 
 
 const App = () => {
 
-  const {showProfile, setShowProfile, showUserLogin, isSignedIn} = useAppContext();
+  const {showProfile, setShowProfile, showUserLogin, isSignedIn, showCheckoutBox} = useAppContext();
   return (
     <>
       <Toaster/>
       <Navbar />
       {showProfile && <Profile/>}
-      {/* {showUserLogin && !isSignedIn ? <Login/> : null} */}
+      {showCheckoutBox &&  <CheckoutBox/>}
 
       <div className='min-h-[70vh]'>
             <Routes>
