@@ -3,11 +3,16 @@ import { useAppContext } from '../context/AppContext';
 import CheckoutBox from './CheckoutBox';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { QRCodeSVG } from 'qrcode.react';
+import ReceiptView from './ReceiptView';
 
 const Cart = () => {
 
     const{ cartItems, setCartItems, showCheckoutBox, setShowCheckoutBox } = useAppContext();
     const [selectedId, setSelectedId] = useState(null);
+    const [completedOrder, setCompletedOrder] = useState(null);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+
 
     const formattedItems = cartItems.map((product) => ({
       productId: product.id, // Handles standard MongoDB object mappings smoothly
@@ -61,6 +66,8 @@ const Cart = () => {
           toast.success(data.message);
           console.log("Payment Confirmed Data:", data.order);
           setCartItems([]); // Clear cart items layout
+          setCompletedOrder(data.order); 
+          setShowReceiptModal(true);
 
         }else{
           toast.error(data.message);
@@ -141,6 +148,48 @@ const Cart = () => {
           onConfirm={handleConfirmOrder}
         />
       )}
+
+      {/* to show the receipt modal after order completion */}
+
+      {showReceiptModal && completedOrder && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="bg-white rounded-3xl p-6 max-w-3xl w-full shadow-2xl flex flex-col md:flex-row gap-8 items-center max-h-[90vh] overflow-y-auto">
+          
+          {/* Left: Reusable Thermal Receipt Rendering Canvas */}
+          <div className="flex-1 w-full border border-gray-200 p-2 rounded-xl bg-gray-50 max-h-[70vh] overflow-y-auto">
+            <ReceiptView order={completedOrder} />
+          </div>
+
+          {/* Right: Interactive Customer QR Actions Panel */}
+          <div className="flex flex-col items-center text-center p-4 min-w-[260px]">
+            <h3 className="text-xl font-black text-gray-800 mb-2">Scan for Soft Copy</h3>
+            <p className="text-sm text-gray-500 mb-4 max-w-[200px]">
+              Point customer phone camera here to download digital copy instantly.
+            </p>
+            
+            {/* Dynamic Live QR Generation String Wrapper */}
+            <div className="bg-white p-4 rounded-2xl shadow-inner border-4 border-[#AEE8F5]">
+              <QRCodeSVG 
+                value={`${window.location.origin}/public/receipt/${completedOrder._id}`}
+                size={180}
+                level={"H"}
+              />
+            </div>
+
+            <button
+              onClick={() => {
+                setShowReceiptModal(false);
+                setCompletedOrder(null);
+              }}
+              className="mt-8 w-full bg-[#3F64BE] hover:bg-[#3453a1] text-white font-bold py-4 rounded-xl shadow transition-all uppercase tracking-wide active:scale-95"
+            >
+              Done / New Order
+            </button>
+          </div>
+
+        </div>
+      </div>
+    )}
     </div>
   )
 }

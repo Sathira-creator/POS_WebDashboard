@@ -10,6 +10,8 @@ import mongoose from 'mongoose';
 import Inventory from './models/Inventory.js';
 import posRouter from './routes/posRoute.js';
 import orderRouter from './routes/orderRoute.js';
+import chartRouter from './routes/chartRoute.js';
+import Order from './models/Order.js';
 
 //Force Node.js to use public DNS servers
 dns.setServers(['1.1.1.1', '1.0.0.1']); 
@@ -35,11 +37,7 @@ dns.setServers(['1.1.1.1', '1.0.0.1']);
  app.use('/api/inventory', inventoryRouter)
  app.use('/api/pos', posRouter)
  app.use('/api/order', orderRouter)
-//  app.use('/api/seller', sellerRouter)
-//  app.use('/api/product', productRouter)
-//  app.use('/api/cart', cartRouter)
-//  app.use('/api/address', addressRouter)
-//  app.use('/api/order', orderRouter)
+ app.use('/api/reports', chartRouter)
 
 
 

@@ -8,9 +8,7 @@ import { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 const DateRangePicker = () => {
-  const {value1, setValue1} = useAppContext(dayjs('2022-04-17'));
-  const {value2, setValue2} = useAppContext(dayjs('2022-04-17'));
-
+  const {startDate, setStartDate, endDate, setEndDate} = useAppContext();
   
 
   return (
@@ -19,14 +17,14 @@ const DateRangePicker = () => {
       <div className="flex flex-col gap-5 pt-2">
         <DatePicker
           label="Controlled picker"
-          value={value1}
-          onChange={(newValue) => setValue1(newValue)}
+          value={startDate}
+          onChange={(newValue) => setStartDate(newValue)}
         />
 
         <DatePicker
           label="Controlled picker"
-          value={value2}
-          onChange={(newValue) => setValue2(newValue)}
+          value={endDate}
+          onChange={(newValue) => setEndDate(newValue)}
         />
       </div>
 

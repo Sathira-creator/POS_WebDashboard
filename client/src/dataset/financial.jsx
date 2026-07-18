@@ -20,7 +20,7 @@ export const amountFormatter = (value) =>
         minimumFractionDigits: 2, 
       })
       .format(value)
-      .replace('LKR', 'Rs.'); // Swaps the formal 'LKR' code for the 'Rs.' symbol
+      .replace('LKR', '$'); // Swaps the formal 'LKR' code for the 'Rs.' symbol
 
 export const salesData = [
   { date: new Date('2026-05-01'), amount: 145000 },

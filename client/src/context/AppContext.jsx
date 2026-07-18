@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast'
 import axios from "axios";
+import dayjs from "dayjs";
 
 axios.defaults.withCredentials = true ;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
@@ -24,8 +25,13 @@ export const AppProvider = ({ children })=>{
     const [cartItems, setCartItems] = useState([]);
     const [showCheckoutBox, setShowCheckoutBox] = useState(false);
 
-    const [value1, setValue1] = useState();
-    const [value2, setValue2] = useState();
+
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+
+    const [startDate, setStartDate] = useState(dayjs(thirtyDaysAgo));
+    const [endDate, setEndDate] = useState(dayjs(today));
 
     const [dashboardData, setDashboardData] = useState({
             bookings: [],
@@ -60,6 +66,8 @@ export const AppProvider = ({ children })=>{
                 setUser(data.user);
                 setIsSignedIn(true);
                 
+            }else{
+                toast.error(data.message)
             }
         } catch (error) {
             setUser(null);
@@ -79,7 +87,7 @@ export const AppProvider = ({ children })=>{
     // },[])
 
     const value = {
-        showProfile, setShowProfile,value1, setValue1, value2, setValue2,isSignedIn, 
+        showProfile, setShowProfile,startDate, setStartDate, endDate, setEndDate,isSignedIn, 
         setIsSignedIn, showUserLogin, setShowUserLogin, user, setUser, isOwner, setIsOwner, 
         dashboardData, setDashboardData, navigate, allProducts, setAllProducts, currentPage, setCurrentPage,
         totalPages, setTotalPages, cartItems, setCartItems, showCheckoutBox, setShowCheckoutBox

@@ -30,7 +30,7 @@ export const register = async (req, res)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000, // cookie expiration time
         })
 
-        return res.json({success: true, user: {email: user.email, name: user.name}})
+        return res.json({success: true, user: {email: user.email, name: user.name, position: user.position}})
             
     } catch (error) {
         console.log(error.message);
@@ -69,7 +69,7 @@ export const login = async (req, res)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000, 
         })
 
-        return res.json({success: true, user: {email: user.email, name: user.name}})
+        return res.json({success: true, user: {email: user.email, name: user.name, position: user.position}})
 
     } catch (error) {
         console.log(error.message);
@@ -82,9 +82,18 @@ export const login = async (req, res)=>{
 // check auth : /api/user/is-auth
 export const isAuth = async (req, res)=>{
     try {
-        const { userId } = req.body;
-        const user = await User.findById(userId).select("-password")
-        return res.json({success: true, user})
+        const cashierId = req.userId; 
+
+        if (!cashierId) {
+        return res.status(401).json({ success: false, message: "User context not found." });
+        }
+
+        const user = await User.findById(cashierId).select("-password");
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User profile not found." });
+        }
+        return res.json({success: true, user: {email: user.email, name: user.name, position: user.position}})
 
     } catch (error) {
         console.log(error.message);
