@@ -60,7 +60,7 @@ const Cart = () => {
 
       fetchCart();
 
-      const socket = io('http://localhost:4000', { withCredentials: true });
+      const socket = io(process.env.VITE_BACKEND_URL, { withCredentials: true });
 
       socket.emit('join_employee_cart', { shopId: activeShopId, employeeId });
 
