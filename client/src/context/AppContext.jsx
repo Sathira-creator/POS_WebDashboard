@@ -4,9 +4,9 @@ import { toast } from 'react-hot-toast'
 import axios from "axios";
 import dayjs from "dayjs";
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
-
+   axios.defaults.baseURL = import.meta.env.PROD ? '' : import.meta.env.VITE_BACKEND_URL;
+   axios.defaults.withCredentials = true;
+   
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
