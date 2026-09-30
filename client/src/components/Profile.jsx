@@ -1,16 +1,18 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import axios from 'axios';               
+import axios from 'axios';                 
 import toast from 'react-hot-toast';
 
+const withCreds = { withCredentials: true };
+
 const Profile = () => {
-    const {showProfile, setShowProfile, isSignedIn, setIsSignedIn, showUserLogin, setShowUserLogin, user, setUser,navigate} = useAppContext();
+    const { showProfile, setShowProfile, isSignedIn, setIsSignedIn, showUserLogin, setShowUserLogin, user, setUser, navigate } = useAppContext();
 
     const handleActionClick = async () => {
         if (isSignedIn) {
             try {
                 // Send request to backend to clean up cookies
-                const { data } = await axios.get(`/api/user/logout`);
+                const { data } = await axios.get(`/api/user/logout`, withCreds);
                 
                 if (data.success) {
                     // Update frontend state ONLY on successful backend response
@@ -31,44 +33,59 @@ const Profile = () => {
             setShowProfile(false); 
         }
     };
-  return (
-    <div onClick={()=> setShowProfile(false)} className='fixed cursor-pointer inset-0 z-30 flex justify-end items-start p-16 bg-black/50'>
-        {/* Main Card Container */}
-        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm bg-[#E5E5E5] rounded-xl p-8 shadow-sm">
-            
-            {/* Header Section: Avatar and Info */}
-            <div className="flex items-start gap-4 mb-20">
-            {/* Avatar Placeholder */}
-            <div className="bg-white p-2 rounded-sm">
+
+    return (
+        <div 
+            onClick={() => setShowProfile(false)} 
+            className='fixed cursor-pointer inset-0 z-50 flex justify-end items-start p-6 bg-black/40 backdrop-blur-xs animate-fade-in'
+        >
+            {/* Main Card Container */}
+            <div 
+                onClick={(e) => e.stopPropagation()} 
+                className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-gray-100 cursor-default mt-16 mr-4"
+            >
                 
-            </div>
-            
-            {/* User Details */}
-            <div className="flex flex-col">
-                {isSignedIn && (
-                    <>
-                        <h2 className="text-xl font-bold text-black leading-tight">
-                        {user?.name || "User Name"}
-                        </h2>
-                        <p className="text-md font-semibold text-black leading-tight">
-                        {user?.position || "User Position" }
-                        </p>
-                    </>
-                )}
+                {/* Header Section: Avatar and Info */}
+                <div className="flex items-center gap-4 mb-8">
+                    {/* Dynamic Initial Avatar */}
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#0070F3] to-[#208AEF] rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-blue-500/20">
+                        {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    
+                    {/* User Details */}
+                    <div className="flex flex-col">
+                        {isSignedIn ? (
+                            <>
+                                <h2 className="text-lg font-black text-[#0D1B2A] leading-tight">
+                                    {user?.name || "User Name"}
+                                </h2>
+                                <span className="text-xs font-bold text-[#0070F3] tracking-wide uppercase mt-1">
+                                    {user?.position || user?.role || "Staff Member"}
+                                </span>
+                            </>
+                        ) : (
+                            <div className="flex flex-col">
+                                <h2 className="text-lg font-black text-[#0D1B2A] leading-tight">Guest User</h2>
+                                <span className="text-xs font-medium text-gray-400 mt-0.5">Please sign in to continue</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
-            </div>
-            </div>
-
-            {/* Action Button */}
-            <button 
-                className="w-full bg-[#FF5A5A] hover:bg-[#ef4444] text-white font-bold py-4 rounded-full text-2xl tracking-widest transition-colors uppercase"
-                onClick={handleActionClick}
+                {/* Action Button */}
+                <button 
+                    className={`w-full font-extrabold py-3.5 rounded-2xl text-sm tracking-wider transition-all shadow-sm cursor-pointer uppercase active:scale-98 ${
+                        isSignedIn 
+                            ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60' 
+                            : 'bg-gradient-to-r from-[#0070F3] to-[#208AEF] hover:from-[#005bb5] hover:to-[#1a73cc] text-white shadow-blue-500/25'
+                    }`}
+                    onClick={handleActionClick}
                 >
-                {isSignedIn? `Log Out` : `Log In`}
-            </button>
+                    {isSignedIn ? `Log Out` : `Log In`}
+                </button>
+            </div>
         </div>
-    </div>
-  )
-}
+    );
+};
 
-export default Profile
+export default Profile;

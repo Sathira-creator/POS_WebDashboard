@@ -11,6 +11,9 @@ import Login from './pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import CheckoutBox from './components/CheckoutBox'
 import PublicReceipt from './pages/PublicReceipt'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminProtectedRoute from './components/protectedRoutes/AdminProtectedRoute'
+
 
 
 const CashierLayout = () => {
@@ -31,17 +34,22 @@ const App = () => {
   return (
     <>
       {showProfile && <Profile/>}
-      {showCheckoutBox &&  <CheckoutBox/>}
+      {showCheckoutBox && <CheckoutBox/>}
 
       <Routes>
-        {/* Public View*/}
+        {/* Public View */}
         <Route path="/public/receipt/:orderId" element={<PublicReceipt />} />
+
+        {/* 2. Protected Admin Dashboard (Only accessible if owner) */}
+        <Route element={<AdminProtectedRoute />}>
+          <Route path='/admin' element={<AdminDashboard />} />
+        </Route>
 
         {/* Cashier Views */}
         <Route element={<CashierLayout />}>
           <Route path='/' element={isSignedIn ? <Navigate to="/pos" replace /> : <Login />} />
           
-          {/* Protected routes */}
+          {/* Protected Cashier routes */}
           <Route element={<ProtectedRoute />}>
             <Route path='/pos' element={<PosPage />} />
             <Route path='/inventory' element={<InventoryPage />} />

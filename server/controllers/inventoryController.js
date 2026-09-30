@@ -1,15 +1,20 @@
+import mongoose from "mongoose";
 import Inventory from "../models/Inventory.js";
 
-//add inventory: /api/inventory/add
-export const addInventory = async (req, res)=>{
+// Add inventory: /api/inventory/add
+export const addInventory = async (req, res) => {
     try {
+        const shopId = req.shopId;
         const { name, category, type, barcode, price, qty, supplier } = req.body;
 
-        //Check if the barcode already exists in the system
-        const existingItem = await Inventory.findOne({ barcode });
+        if (!name || !category || !type || !barcode || price === undefined || qty === undefined || !supplier) {
+            return res.json({ success: false, message: "Missing Details" });
+        }
+
+        // Check if the barcode already exists SPECIFICALLY within this shop
+        const existingItem = await Inventory.findOne({ barcode, shopId });
         if (existingItem) {
             existingItem.qty += Number(qty);
-
             await existingItem.save();
 
             return res.json({ 
@@ -19,45 +24,44 @@ export const addInventory = async (req, res)=>{
             });
         }
 
-        if (!name || !category || !type || !barcode || price === undefined || qty === undefined || !supplier) {
-            return res.json({success: false, message: "Missing Details"})
-        }
+        // Create new inventory item tied to this shop
+        const inventory = await Inventory.create({
+            name, 
+            category, 
+            type, 
+            barcode, 
+            price, 
+            qty, 
+            supplier, 
+            shop: shopId
+        });
 
-        const inventory = await Inventory.create({name, category, type, barcode, price, qty, supplier})
-
-        return res.json({success: true,  message: "product added", product: inventory})
+        return res.json({ success: true, message: "Product added", product: inventory });
             
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
-
     }
-}
+};
 
-
-
-// get inventory: /api/inventory/list
-export const getInventory = async (req, res)=>{
-    try{
+// Get inventory: /api/inventory/list
+export const getInventory = async (req, res) => {
+    try {
+        const shopId = req.shopId;
         const currentPage = Math.max(1, Number(req.query.page) || 1);
         const itemsPerPage = 10;
         const type = req.query.type;
-
         const itemsToSkip = (currentPage - 1) * itemsPerPage;
 
-        let filterQuery = {};
+        // Base filter MUST always include the shopId
+        let filterQuery = { shop: shopId };
 
         if (type === "inStock") {
-            // qty > 3
-            filterQuery = { qty: { $gt: 3 } };
+            filterQuery.qty = { $gt: 3 };
         } else if (type === "lowStock") {
-            // 0 < qty <= 3 (Greater than 0, but less than or equal to 3)
-            filterQuery = { qty: { $gt: 0, $lte: 3 } };
+            filterQuery.qty = { $gt: 0,$lte: 3 };
         } else if (type === "outStock") {
-            // qty = 0
-            filterQuery = { qty: 0 };
-        } else if (type === "all") {
-            filterQuery = {}; // No filter, get all items
+            filterQuery.qty = 0;
         }
 
         const [inventory, totalItems] = await Promise.all([
@@ -65,38 +69,38 @@ export const getInventory = async (req, res)=>{
                 .skip(itemsToSkip)
                 .limit(itemsPerPage)
                 .lean(),
-            
-            Inventory.countDocuments(filterQuery) // for total count
+            Inventory.countDocuments(filterQuery)
         ]);
 
         const stockCounts = await Inventory.aggregate([
+            { $match: { shop: new mongoose.Types.ObjectId(shopId) } }, // Restrict aggregation strictly to this shop
             {
                 $facet: {
                     inStock: [
-                        { $match: { qty: { $gt: 3 } } },
-                        { $count: "count" }
+                        { $match: { qty: { $gt: 3 } } },                         
+                        {$count: "count" }
                     ],
                     lowStock: [
-                        { $match: { qty: { $gt: 0, $lte: 3 } } },
-                        { $count: "count" }
+                        { $match: { qty: {$gt: 0, $lte: 3 } } },                         
+                        {$count: "count" }
                     ],
                     outStock: [
-                        { $match: { qty: { $eq: 0 } } },
-                        { $count: "count" }
+                        { $match: { qty: { $eq: 0 } } },                         
+                        {$count: "count" }
                     ]
                 }
             }
         ]);
 
-        const counts = stockCounts[0];
-        const inStockCount = counts.inStock[0]?.count || 0;
-        const lowStockCount = counts.lowStock[0]?.count || 0;
-        const outStockCount = counts.outStock[0]?.count || 0;
+        const counts = stockCounts[0] || {};
+        const inStockCount = counts.inStock?.[0]?.count || 0;
+        const lowStockCount = counts.lowStock?.[0]?.count || 0;
+        const outStockCount = counts.outStock?.[0]?.count || 0;
         
         return res.json({
             success: true,
             inventory,
-            totalPages: Math.ceil(totalItems / itemsPerPage),
+            totalPages: Math.ceil(totalItems / itemsPerPage) || 1,
             totalItems,
             summary: {
                 inStock: inStockCount,
@@ -105,108 +109,103 @@ export const getInventory = async (req, res)=>{
             }
         });
 
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message });
     }
-}
+};
 
-// update inventory: /api/inventory/update
-export const updateInventory = async (req, res)=>{
-    try{
+// Update inventory: /api/inventory/update
+export const updateInventory = async (req, res) => {
+    try {
+        const shopId = req.shopId;
         const { name, category, type, barcode, price, qty, supplier } = req.body;
+        
         if (!barcode) {
             return res.status(400).json({ success: false, message: "Barcode is required to perform an update" });
         }
-        const existingItem = await Inventory.findOne({ barcode });
+
+        // Ensure we only find and update items belonging to this shop
+        const existingItem = await Inventory.findOne({ barcode, shop: shopId });
+        
         if (existingItem) {
             existingItem.qty = Number(qty);
             existingItem.name = name;
             existingItem.category = category;
             existingItem.type = type;
             existingItem.price = price;
-            existingItem.supplier = supplier ;
+            existingItem.supplier = supplier;
 
             await existingItem.save();
 
             return res.json({ 
                 success: true, 
-                message: `Stock updated`,
+                message: "Stock updated",
                 product: existingItem 
             });
-        }else{
+        } else {
             return res.status(404).json({ 
                 success: false, 
-                message: `No item found matching` 
+                message: "No item found matching this barcode in your shop" 
             });
         }
 
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message });
     }
-}
+};
 
-// delete inventory: /api/inventory/delete
-export const deleteInventory = async (req, res)=>{
+// Delete inventory: /api/inventory/delete
+export const deleteInventory = async (req, res) => {
     try {
+        const shopId = req.shopId;
         const selectedId = req.query.selectedId;
 
-        // 1. Validate that an ID was actually provided
         if (!selectedId) {
-            return res.json({ 
-                success: false, 
-                message: "Product ID is required for deletion." 
-            });
+            return res.json({ success: false, message: "Product ID is required for deletion." });
         }
 
-        // 2. Find and delete the item in one operation
-        const deletedItem = await Inventory.findByIdAndDelete(selectedId);
+        // SAFE DELETE: Ensures users cannot delete items from other shops
+        const deletedItem = await Inventory.findOneAndDelete({ _id: selectedId, shop: shopId });
 
-        // 3. Check if the item existed in the database
         if (!deletedItem) {
-            return res.json({ 
-                success: false, 
-                message: "Product not found or already deleted." 
-            });
+            return res.json({ success: false, message: "Product not found or unauthorized." });
         }
 
-        // 4. Return success response
         return res.json({
             success: true,
             message: `"${deletedItem.name}" has been successfully deleted.`
         });
-
         
     } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message });
     }
-}
+};
 
-// search inventory: /api/inventory/search
-export const searchInventory = async (req, res)=>{
-    try{
+// Search inventory: /api/inventory/search
+export const searchInventory = async (req, res) => {
+    try {
+        const shopId = req.shopId;
         const { name, category, type, barcode, supplier, price, qty, page } = req.query;
 
         const currentPage = Math.max(1, Number(page) || 1);
         const itemsPerPage = 10;
         const itemsToSkip = (currentPage - 1) * itemsPerPage;
 
-        let searchQuery = {};
+        // Search query MUST always be scoped to the shopId
+        let searchQuery = { shop: shopId };
 
-        // Case-insensitive partial matching for text fields using Regex
-        if (name) searchQuery.name = { $regex: name, $options: "i" };
-        if (category) searchQuery.category = { $regex: category, $options: "i" };
-        if (type) searchQuery.type = { $regex: type, $options: "i" };
-        if (supplier) searchQuery.supplier = { $regex: supplier, $options: "i" };
-        if (barcode) searchQuery.barcode = { $regex: barcode, $options: "i" };
+        if (name) searchQuery.name = { $regex: name,$options: "i" };
+        if (category) searchQuery.category = { $regex: category,$options: "i" };
+        if (type) searchQuery.type = { $regex: type,$options: "i" };
+        if (supplier) searchQuery.supplier = { $regex: supplier,$options: "i" };
+        if (barcode) searchQuery.barcode = { $regex: barcode,$options: "i" };
 
-        // Exact matching for numeric values (only if they are provided)
         if (price) searchQuery.price = Number(price);
         if (qty) searchQuery.qty = Number(qty);
 
-        // 2. Fetch the matched items and the total match count in parallel
         const [results, totalMatches] = await Promise.all([
             Inventory.find(searchQuery)
                 .skip(itemsToSkip)
@@ -215,18 +214,15 @@ export const searchInventory = async (req, res)=>{
             Inventory.countDocuments(searchQuery)
         ]);
 
-        // 3. Send back responses consistent with your client architecture
         return res.json({
             success: true,
             results,
-            totalPages: Math.ceil(totalMatches / itemsPerPage),
+            totalPages: Math.ceil(totalMatches / itemsPerPage) || 1,
             totalItems: totalMatches
         });
 
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message });
     }
-}
-
-
+};

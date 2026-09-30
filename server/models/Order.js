@@ -1,17 +1,18 @@
 import mongoose from "mongoose";
 
-const OrderItemSchema = new mongoose.Schema({
+const orderItemSchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Inventory', required: true },
   itemName: { type: String, required: true },
-  quantity: { type: Number, required: true },
+  quantity: { type: Number, required: true, min: 1 },
   unitPrice: { type: Number, required: true },
   discountPercentage: { type: Number, default: 0 }
 });
 
-const OrderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
   orderNumber: { type: String, required: true, unique: true },
-  cashierId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  items: [OrderItemSchema],
+  shop: { type: mongoose.Schema.Types.ObjectId, ref: 'Shop', required: true },
+  cashierId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
+  items: [orderItemSchema],
   subtotal: { type: Number, required: true },
   totalDiscount: { type: Number, default: 0 },
   netTotal: { type: Number, required: true },
@@ -21,6 +22,4 @@ const OrderSchema = new mongoose.Schema({
   changeGiven: { type: Number, default: 0 }
 }, { timestamps: true });
 
-const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
-
-export default Order;
+export default mongoose.models.Order || mongoose.model('Order', orderSchema);

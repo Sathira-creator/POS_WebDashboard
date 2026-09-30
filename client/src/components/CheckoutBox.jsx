@@ -17,6 +17,7 @@ const CheckoutBox = ({ subtotal, onConfirm }) => {
         toast.error("Please enter a valid cash amount equal to or greater than the subtotal.");
       return;
     }
+    setShowCheckoutBox(false);
 
     // Pass the checkout summary data back up
     onConfirm({
@@ -27,7 +28,7 @@ const CheckoutBox = ({ subtotal, onConfirm }) => {
       cashReceived: paymentMethod === 'cash' ? Number(cashReceived) : 0,
       changeDue: paymentMethod === 'cash' ? changeDue : 0
     });
-    setShowCheckoutBox(false);
+    
   };
 
   const onClose = () => {
@@ -51,29 +52,23 @@ const CheckoutBox = ({ subtotal, onConfirm }) => {
             Payment Method:
             </label>
             <div className="flex gap-6 items-center pl-2">
-            <label className="flex items-center gap-2 text-xl font-bold cursor-pointer capitalize">
+            {['cash', 'online', 'card'].map((method) => (
+            <label 
+                key={method} 
+                className="flex items-center gap-2 text-xl font-bold cursor-pointer capitalize select-none"
+            >
                 <input
                 type="radio"
                 name="payment"
-                value="cash"
-                checked={paymentMethod === 'cash'}
+                value={method}
+                checked={paymentMethod === method}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-5 h-5 accent-[#3F64BE]"
+                className="w-5 h-5 text-[#3F64BE] border-gray-300 focus:ring-[#3F64BE] accent-[#3F64BE] cursor-pointer"
                 />
-                cash
+                {method}
             </label>
-            <label className="flex items-center gap-2 text-xl font-bold cursor-pointer capitalize">
-                <input
-                type="radio"
-                name="payment"
-                value="online"
-                checked={paymentMethod === 'online'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-5 h-5 accent-[#3F64BE]"
-                />
-                online
-            </label>
-            </div>
+            ))}
+        </div>
         </div>
 
         {/* 3. Conditional Cash Input & Change Balance */}

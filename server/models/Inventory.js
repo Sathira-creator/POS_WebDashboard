@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 
-const InventorySchema = new mongoose.Schema({
-    name: {type: String, required: true },
-    category: {type: String, required: true },
-    type: {type: String, required: true },
-    barcode: {type: String, required: true },
-    price: {type: Number, required: true },
-    qty: {type: Number, required: true },
-    supplier: {type: String, required: true },
-    
-}, { timestamps: true })
+const inventorySchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    category: { type: String, required: true },
+    type: { type: String, required: true },
+    barcode: { type: String, required: true },
+    price: { type: Number, required: true, min: 0 },
+    qty: { type: Number, required: true, min: 0, default: 0 },
+    supplier: { type: String, required: true },
+    shop: { type: mongoose.Schema.Types.ObjectId, ref: 'Shop', required: true } // Strict shop relation
+}, { timestamps: true });
 
-const Inventory =  mongoose.models.Inventory || mongoose.model('Inventory', InventorySchema)
+// Ensure barcodes are unique per individual shop
+inventorySchema.index({ barcode: 1, shop: 1 }, { unique: true });
 
-export default Inventory ;
+export default mongoose.models.Inventory || mongoose.model('Inventory', inventorySchema);

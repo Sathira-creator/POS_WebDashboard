@@ -1,11 +1,13 @@
 import express from 'express';
-import { createOrder } from '../controllers/orderController.js';
+import { createOrder, getShopOrders } from '../controllers/orderController.js';
 import authUser from '../middleware/authUser.js';
 import Order from '../models/Order.js';
+import { verifyShopAccess } from '../middleware/authShop.js';
 
 const orderRouter = express.Router();
 
-orderRouter.post('/create',authUser, createOrder);
+orderRouter.get('/orderlist', authUser, verifyShopAccess, getShopOrders);
+orderRouter.post('/create',authUser, verifyShopAccess,  createOrder);
 
 orderRouter.get('/public/:id', async (req, res) => {
     try {
