@@ -60,10 +60,7 @@ const Cart = () => {
 
       fetchCart();
 
-      const socket = io(import.meta.env.VITE_BACKEND_URL, {
-        transports: ['websocket'],
-        withCredentials: true,
-      });
+      const socket = io('https://pos-web-dashboard-583g.vercel.app', { withCredentials: true });
 
       socket.emit('join_employee_cart', { shopId: activeShopId, employeeId });
 

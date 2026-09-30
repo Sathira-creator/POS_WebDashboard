@@ -12,9 +12,6 @@ import posRouter from './routes/posRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import chartRouter from './routes/chartRoute.js';
 import shopRoutes from './routes/shopRoutes.js';
-import { createAdapter } from '@socket.io/redis-adapter';
-import { createClient } from 'redis';
-
 
 // Force Node.js to use public DNS servers
 dns.setServers(['1.1.1.1', '1.0.0.1']); 
@@ -22,9 +19,7 @@ dns.setServers(['1.1.1.1', '1.0.0.1']);
 const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 4000;
-const pubClient = createClient({ url: process.env.REDIS_URL });
-const subClient = pubClient.duplicate();
-await Promise.all([pubClient.connect(), subClient.connect()]);
+
 
 
 await connectDB();
@@ -38,9 +33,10 @@ const allowedOrigins = [
 
 // Setup Socket.io with CORS matching Express
 const io = new Server(server, {
-  cors: { origin: allowedOrigins, credentials: true },
-  transports: ['websocket'],
-  adapter: createAdapter(pubClient, subClient),
+  cors: {
+    origin: allowedOrigins,
+    credentials: true
+  }
 });
 
 // Make io accessible inside routes via req.app.get('io')
