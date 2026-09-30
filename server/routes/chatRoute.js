@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 
         // Call Gemini model
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: prompt,
             config: {
                 systemInstruction: "You are an intelligent, helpful assistant built into MerchGrid POS System. Help store owners manage inventory, understand sales data, and handle retail workflow questions clearly and concisely."
