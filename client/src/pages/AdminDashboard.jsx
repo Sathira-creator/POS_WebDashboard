@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { FiDollarSign, FiShoppingBag, FiBox, FiUsers, FiPlus, FiLogOut } from 'react-icons/fi';
+import { FiDollarSign, FiShoppingBag, FiBox, FiUsers, FiPlus, FiLogOut, FiMessageSquare } from 'react-icons/fi';
+import ChatbotView from '../components/ChatbotView'; // Import the Chatbot view component
 
 const withCreds = { withCredentials: true };
 
 const AdminDashboard = () => {
     const { user, setUser, setIsSignedIn, navigate } = useAppContext();
-    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' or 'orders'
+    const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'orders', or 'chatbot'
     const [stats, setStats] = useState({
         totalSales: 0,
         totalOrders: 0,
@@ -184,25 +185,33 @@ const AdminDashboard = () => {
                 <div>
                     <h1 className="text-xl font-black text-[#0D1B2A] mb-8 tracking-wider uppercase">POS Manager</h1>
                     <nav className="flex flex-col gap-2">
-                        <button 
-                            onClick={() => handleTabChange('dashboard')} 
-                            className={`flex items-center gap-3 p-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border ${
-                                activeTab === 'dashboard' 
-                                    ? 'bg-blue-50/50 text-[#0070F3] border-blue-100' 
-                                    : 'text-gray-500 hover:bg-gray-50 border-transparent'
-                            }`}
+                        <button
+                            onClick={() => handleTabChange('dashboard')}
+                            className={`flex items-center gap-3 p-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border ${activeTab === 'dashboard'
+                                ? 'bg-blue-50/50 text-[#0070F3] border-blue-100'
+                                : 'text-gray-500 hover:bg-gray-50 border-transparent'
+                                }`}
                         >
                             <FiShoppingBag size={18} /> Dashboard
                         </button>
-                        <button 
-                            onClick={() => handleTabChange('orders')} 
-                            className={`flex items-center gap-3 p-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border ${
-                                activeTab === 'orders' 
-                                    ? 'bg-blue-50/50 text-[#0070F3] border-blue-100' 
-                                    : 'text-gray-500 hover:bg-gray-50 border-transparent'
-                            }`}
+                        <button
+                            onClick={() => handleTabChange('orders')}
+                            className={`flex items-center gap-3 p-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border ${activeTab === 'orders'
+                                ? 'bg-blue-50/50 text-[#0070F3] border-blue-100'
+                                : 'text-gray-500 hover:bg-gray-50 border-transparent'
+                                }`}
                         >
                             <FiDollarSign size={18} /> Orders
+                        </button>
+                        {/* Chatbot Tab Button */}
+                        <button
+                            onClick={() => handleTabChange('chatbot')}
+                            className={`flex items-center gap-3 p-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all border ${activeTab === 'chatbot'
+                                ? 'bg-blue-50/50 text-[#0070F3] border-blue-100'
+                                : 'text-gray-500 hover:bg-gray-50 border-transparent'
+                                }`}
+                        >
+                            <FiMessageSquare size={18} /> AI Chatbot
                         </button>
                         <button onClick={() => navigate('/pos')} className="flex items-center gap-3 p-3.5 text-gray-500 hover:bg-gray-50 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all border border-transparent">
                             <FiBox size={18} /> POS Terminal
@@ -220,18 +229,26 @@ const AdminDashboard = () => {
                 <header className="flex justify-between items-center mb-8">
                     <div>
                         <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
-                            {activeTab === 'dashboard' ? 'Overview' : 'Transactions'}
+                            {activeTab === 'dashboard' ? 'Overview' : activeTab === 'orders' ? 'Transactions' : 'Assistant'}
                         </span>
                         <h2 className="text-2xl font-black text-[#0D1B2A]">
-                            {activeTab === 'dashboard' ? `Welcome, ${user?.name || 'Admin'}` : 'Shop Orders'}
+                            {activeTab === 'dashboard'
+                                ? `Welcome, ${user?.name || 'Admin'}`
+                                : activeTab === 'orders'
+                                    ? 'Shop Orders'
+                                    : 'MerchGrid AI Chatbot'}
                         </h2>
                         <p className="text-xs text-gray-500 font-medium mt-0.5">
-                            {activeTab === 'dashboard' ? 'Manage your branch staff and inventory from here.' : 'View all customer orders and purchase records.'}
+                            {activeTab === 'dashboard'
+                                ? 'Manage your branch staff and inventory from here.'
+                                : activeTab === 'orders'
+                                    ? 'View all customer orders and purchase records.'
+                                    : 'Ask questions and manage your operations with AI.'}
                         </p>
                     </div>
                     {activeTab === 'dashboard' && (
-                        <button 
-                            onClick={() => setShowAddWorkerModal(true)} 
+                        <button
+                            onClick={() => setShowAddWorkerModal(true)}
                             className="flex items-center gap-2 bg-[#0070F3] text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider hover:bg-blue-600 transition-all cursor-pointer shadow-xs shadow-blue-500/20"
                         >
                             <FiPlus size={16} /> Add Worker
@@ -243,9 +260,6 @@ const AdminDashboard = () => {
                     <>
                         {/* Analytics Metric Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-
-                            
-
                             <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-2xs flex items-center justify-between">
                                 <div>
                                     <p className="text-[11px] font-black tracking-wider text-purple-600 uppercase mb-0.5">Staff Members</p>
@@ -292,10 +306,9 @@ const AdminDashboard = () => {
                             )}
                         </div>
                     </>
-                ) : (
+                ) : activeTab === 'orders' ? (
                     /* Orders List Section */
                     <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-2xs mb-8">
-
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                             <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-2xs flex items-center justify-between">
                                 <div>
@@ -306,13 +319,11 @@ const AdminDashboard = () => {
                                     <FiShoppingBag size={20} />
                                 </div>
                             </div>
-
                         </div>
 
-                            
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xs font-black text-[#0D1B2A] uppercase tracking-wider">All Branch Orders</h3>
-                            <button 
+                            <button
                                 onClick={fetchOrders}
                                 className="text-[11px] font-black uppercase tracking-wider text-[#0070F3] hover:underline"
                             >
@@ -345,11 +356,9 @@ const AdminDashboard = () => {
                                                 <td className="py-3.5 px-4 font-black text-[#0D1B2A]">
                                                     #{order.orderNumber || (order._id ? order._id.slice(-6).toUpperCase() : 'N/A')}
                                                 </td>
-                                                {/* Display Cashier Name */}
                                                 <td className="py-3.5 px-4 font-medium text-gray-600">
                                                     {order.cashierId?.name || 'Walk-in Cashier'}
                                                 </td>
-                                                {/* Fix Total Amount (netTotal) */}
                                                 <td className="py-3.5 px-4 font-black text-emerald-600">
                                                     ${(order.netTotal || order.subtotal || 0).toFixed(2)}
                                                 </td>
@@ -368,15 +377,18 @@ const AdminDashboard = () => {
                             </div>
                         )}
                     </div>
+                ) : (
+                    /* Chatbot View Render */
+                    <ChatbotView />
                 )}
             </main>
 
             {/* Modal: Add Worker */}
             {showAddWorkerModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-                    <form onSubmit={handleAddWorker} className="bg-white w-[400px] p-6 rounded-3xl shadow-xl flex flex-col gap-4 border border-gray-100">
+                    <form onSubmit={handleAddWorker} className="bg-white w-400px p-6 rounded-3xl shadow-xl flex flex-col gap-4 border border-gray-100">
                         <h3 className="text-sm font-black text-[#0D1B2A] uppercase tracking-wider">Add New Worker</h3>
-                        
+
                         <div>
                             <label className="text-[11px] font-black text-gray-400 uppercase tracking-wider">Full Name</label>
                             <input type="text" value={workerName} onChange={(e) => setWorkerName(e.target.value)} placeholder="e.g. Jane Doe" className="w-full bg-gray-50 border border-gray-200 p-3 rounded-2xl mt-1 text-xs font-bold text-[#0D1B2A] outline-blue-500" required />

@@ -12,23 +12,23 @@ import posRouter from './routes/posRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import chartRouter from './routes/chartRoute.js';
 import shopRoutes from './routes/shopRoutes.js';
+import chatRouter from './routes/chatRoute.js';
 
 // Force Node.js to use public DNS servers
-dns.setServers(['1.1.1.1', '1.0.0.1']); 
+dns.setServers(['1.1.1.1', '1.0.0.1']);
 
 const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 4000;
 
-
-
 await connectDB();
 
 // Allow multiple origins 
 const allowedOrigins = [
-  'https://pos-web-dashboard-gold.vercel.app', 
-  'exp://10.183.170.180:8081', 
-  'http://localhost:8081'
+  'https://pos-web-dashboard-gold.vercel.app',
+  'exp://10.183.170.180:8081',
+  'http://localhost:8081',
+  'http://localhost:5173'
 ];
 
 // Setup Socket.io with CORS matching Express
@@ -73,6 +73,7 @@ app.use('/api/inventory', inventoryRouter);
 app.use('/api/pos', posRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/reports', chartRouter);
+app.use('/api/chat', chatRouter); // <-- Added chatbot API route registration
 
 // Start server using 'server.listen' instead of 'app.listen' to support WebSockets
 server.listen(port, () => {
