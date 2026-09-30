@@ -14,10 +14,11 @@ const Navbar = () => {
     const path = location.pathname.toLowerCase();
     if (path.includes('inventory')) setActiveTab('INVENTORY');
     else if (path.includes('reports')) setActiveTab('REPORTS');
+    else if (path.includes('chatbot')) setActiveTab('CHATBOT');
     else setActiveTab('POS');
   }, [location.pathname]);
 
-  const tabs = ['POS', 'INVENTORY', 'REPORTS'];
+  const tabs = ['POS', 'INVENTORY', 'REPORTS', 'CHATBOT'];
 
   return (
     <nav className="grid grid-cols-3 items-center w-full px-8 py-4 bg-white border-b border-gray-100 shadow-sm">

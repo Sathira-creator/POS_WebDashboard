@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiDollarSign, FiShoppingBag, FiBox, FiUsers, FiPlus, FiLogOut, FiMessageSquare } from 'react-icons/fi';
-import ChatbotView from '../components/ChatbotView'; // Import the Chatbot view component
+import ChatbotView from '../pages/ChatbotView'; // Import the Chatbot view component
 
 const withCreds = { withCredentials: true };
 
