@@ -24,7 +24,7 @@ await connectDB();
 
 // Allow multiple origins 
 const allowedOrigins = [
-  'https://pos-web-dashboard-gold.vercel.app/', 
+  'https://pos-web-dashboard-gold.vercel.app', 
   'exp://10.183.170.180:8081', 
   'http://localhost:8081'
 ];
