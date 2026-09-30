@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MerchGrid",
-    "slug": "AI integrated merch store",
+    "slug": "ai-integrated-merch-store",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/merchgrid.png",
@@ -20,7 +20,12 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.sathirat.aiintegratedmerchstore"
     },
     "web": {
       "output": "static",
@@ -50,6 +55,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ba926a1a-7ff1-46eb-938a-34043f88de5a"
+      }
     }
   }
 }
