@@ -5,6 +5,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import PosPage from './pages/PosPage'
 import InventoryPage from './pages/InventoryPage'
 import ReportPage from './pages/ReportPage'
+import ChatbotPage from './pages/ChatbotPage';
 import { useAppContext } from './context/AppContext'
 import Profile from './components/Profile'
 import Login from './pages/Login'
@@ -17,24 +18,24 @@ import AdminProtectedRoute from './components/protectedRoutes/AdminProtectedRout
 
 
 const CashierLayout = () => {
-    return (
-      <>
-        <Toaster/>
-        <Navbar />
-        <div className='min-h-[70vh]'>
-          <Outlet />
-        </div>
-      </>
-    );
-  };
+  return (
+    <>
+      <Toaster />
+      <Navbar />
+      <div className='min-h-[70vh]'>
+        <Outlet />
+      </div>
+    </>
+  );
+};
 
 const App = () => {
 
-  const {showProfile, setShowProfile, showUserLogin, isSignedIn, showCheckoutBox} = useAppContext();
+  const { showProfile, setShowProfile, showUserLogin, isSignedIn, showCheckoutBox } = useAppContext();
   return (
     <>
-      {showProfile && <Profile/>}
-      {showCheckoutBox && <CheckoutBox/>}
+      {showProfile && <Profile />}
+      {showCheckoutBox && <CheckoutBox />}
 
       <Routes>
         {/* Public View */}
@@ -48,7 +49,7 @@ const App = () => {
         {/* Cashier Views */}
         <Route element={<CashierLayout />}>
           <Route path='/' element={isSignedIn ? <Navigate to="/pos" replace /> : <Login />} />
-          
+
           {/* Protected Cashier routes */}
           <Route element={<ProtectedRoute />}>
             <Route path='/pos' element={<PosPage />} />
