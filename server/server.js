@@ -20,11 +20,13 @@ const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 4000;
 
+
+
 await connectDB();
 
 // Allow multiple origins 
 const allowedOrigins = [
-  'http://localhost:5173', 
+  'https://pos-web-dashboard-gold.vercel.app', 
   'exp://10.183.170.180:8081', 
   'http://localhost:8081'
 ];
