@@ -3,10 +3,10 @@ import { useAppContext } from '../context/AppContext';
 
 export default function ReceiptView({ order }) {
   const { activeShop } = useAppContext();
-  const shopName = order?.name || "DRIVE POS MINIMART";
-  const shopLocation = order?.address || activeShop?.location || "Kandy, Sri Lanka";
-  const shopDistrict = order?.district || activeShop?.district || "Kandy";
-  const shopCity = order?.city || activeShop?.city || "Sri Lanka";
+  const shopName = order?.shop?.name || "DRIVE POS MINIMART";
+  const shopLocation = order?.shop?.address || activeShop?.location || "Kandy, Sri Lanka";
+  const shopDistrict = order?.shop?.district || activeShop?.district || "Kandy";
+  const shopCity = order?.shop?.city || activeShop?.city || "Sri Lanka";
   return (
     <div className="w-full max-w-sm bg-white p-6 font-mono text-xs text-black shadow-md border-t-4 border-dashed border-gray-300">
       {/* Header section */}
