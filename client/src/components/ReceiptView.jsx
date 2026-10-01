@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 
 export default function ReceiptView({ order }) {
+  const { activeShop } = useAppContext();
   const shopName = order?.name || "DRIVE POS MINIMART";
   const shopLocation = order?.address || activeShop?.location || "Kandy, Sri Lanka";
   const shopDistrict = order?.district || activeShop?.district || "Kandy";
