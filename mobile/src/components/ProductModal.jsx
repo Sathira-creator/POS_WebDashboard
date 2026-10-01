@@ -176,47 +176,54 @@ export default function ProductModal({ visible, mode, product, onClose, onSubmit
 
           <TextInput
             placeholder="Product Name"
+            placeholderTextColor="#9CA3AF"
             value={name}
             onChangeText={setName}
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Category"
+            placeholderTextColor="#9CA3AF"
             value={category}
             onChangeText={setCategory}
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Type"
+            placeholderTextColor="#9CA3AF"
             value={type}
             onChangeText={setType}
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Quantity"
+            placeholderTextColor="#9CA3AF"
             value={quantity}
             onChangeText={setQuantity}
             keyboardType="numeric"
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Price"
+            placeholderTextColor="#9CA3AF"
             value={price}
             onChangeText={setPrice}
             keyboardType="numeric"
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Barcode"
+            placeholderTextColor="#9CA3AF"
             value={barcode}
             onChangeText={setBarcode}
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
           <TextInput
             placeholder="Supplier"
+            placeholderTextColor="#9CA3AF"
             value={supplier}
             onChangeText={setSupplier}
-            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm"
+            className="border border-gray-300 rounded-xl p-3 mb-3 text-sm text-[#0D1B2A]"
           />
 
           <View className="flex-row gap-3 mt-3">

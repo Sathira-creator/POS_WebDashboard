@@ -2,15 +2,18 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 
 export default function ReceiptView({ order }) {
-  const { activeShop } = useAppContext();
-  const shopName = activeShop?.name || "DRIVE POS MINIMART";
-  const shopLocation = activeShop?.address || activeShop?.location || "Kandy, Sri Lanka";
+  const shopName = order?.name || "DRIVE POS MINIMART";
+  const shopLocation = order?.address || activeShop?.location || "Kandy, Sri Lanka";
+  const shopDistrict = order?.district || activeShop?.district || "Kandy";
+  const shopCity = order?.city || activeShop?.city || "Sri Lanka";
   return (
     <div className="w-full max-w-sm bg-white p-6 font-mono text-xs text-black shadow-md border-t-4 border-dashed border-gray-300">
       {/* Header section */}
       <div className="text-center mb-4">
         <h2 className="text-base font-black tracking-wider uppercase">{shopName}</h2>
         <p className="text-gray-500">{shopLocation}</p>
+        <p className="text-gray-500">{shopDistrict}</p>
+        <p className="text-gray-500">{shopCity}</p>
         <p className="text-[10px] text-gray-400">Invoice: {order.orderNumber}</p>
         <p className="text-[10px] text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
       </div>
