@@ -3,8 +3,8 @@ import { useAppContext } from '../context/AppContext';
 
 export default function ReceiptView({ order }) {
   const { activeShop } = useAppContext();
-  const shopName = order?.shop?.name || "DRIVE POS MINIMART";
-  const shopLocation = order?.shop?.address || activeShop?.location || "Kandy, Sri Lanka";
+  const shopName = order?.shop?.name || activeShop?.name  || "DRIVE POS MINIMART";
+  const shopLocation = order?.shop?.address || activeShop?.address || "Kandy, Sri Lanka";
   const shopCity = order?.shop?.district || activeShop?.district || "Kandy";
   const shopDistrict = order?.shop?.city || activeShop?.city || "Sri Lanka";
   return (
