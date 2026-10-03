@@ -317,7 +317,7 @@ const InventoryPage = () => {
                   >
                     <td className="p-4 font-bold text-[#0D1B2A]">{p.name}</td>
                     <td className="p-4 text-center font-semibold text-gray-700">{p.qty}</td>
-                    <td className="p-4 text-center font-semibold text-gray-700">${Number(p.price).toFixed(2)}</td>
+                    <td className="p-4 text-center font-semibold text-gray-700">Rs.{Number(p.price).toFixed(2)}</td>
                     <td className="p-4 font-mono text-xs text-gray-500">{p.barcode}</td>
                     <td className="p-4 text-gray-600">{p.supplier}</td>
                     <td className="p-4 text-gray-600">{p.category}</td>
@@ -434,7 +434,7 @@ const InventoryPage = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Price ($)</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Price (Rs.)</label>
                 <input name="price" type="number" value={form.price} onChange={handleChange} placeholder="0.00" className="w-full p-3.5 bg-gray-50 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:border-[#0070F3] transition-colors" />
               </div>
               <div>

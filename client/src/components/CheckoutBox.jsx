@@ -42,7 +42,7 @@ const CheckoutBox = ({ subtotal, onConfirm }) => {
         {/* 1. Subtotal Display */}
         <div className="text-center mb-6">
             <h2 className="text-2xl font-black tracking-wide">
-            SUB TOTAL: <span className="text-black">${subtotal}</span>
+            SUB TOTAL: <span className="text-black">Rs.{subtotal}</span>
             </h2>
         </div>
 
@@ -91,7 +91,7 @@ const CheckoutBox = ({ subtotal, onConfirm }) => {
             <div className="flex items-center justify-between border-t border-dashed border-gray-400 pt-2 text-sm font-bold text-gray-600">
                 <span>Change Due:</span>
                 <span className={`text-lg font-black ${changeDue >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                ${changeDue >= 0 ? changeDue.toFixed(2) : '0.00'}
+                Rs.{changeDue >= 0 ? changeDue.toFixed(2) : '0.00'}
                 </span>
             </div>
             </div>

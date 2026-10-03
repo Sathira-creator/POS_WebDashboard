@@ -360,7 +360,7 @@ const AdminDashboard = () => {
                                                     {order.cashierId?.name || 'Walk-in Cashier'}
                                                 </td>
                                                 <td className="py-3.5 px-4 font-black text-emerald-600">
-                                                    ${(order.netTotal || order.subtotal || 0).toFixed(2)}
+                                                    Rs.{(order.netTotal || order.subtotal || 0).toFixed(2)}
                                                 </td>
                                                 <td className="py-3.5 px-4">
                                                     <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider border border-amber-100">

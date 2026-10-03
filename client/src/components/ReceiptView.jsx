@@ -27,10 +27,10 @@ export default function ReceiptView({ order }) {
           <div key={idx} className="flex flex-col">
             <div className="flex justify-between font-bold">
               <span>{item.itemName}</span>
-              <span>${(item.quantity * item.unitPrice).toFixed(2)}</span>
+              <span>Rs.{(item.quantity * item.unitPrice).toFixed(2)}</span>
             </div>
             <div className="text-gray-500 text-[10px] pl-2">
-              {item.quantity} x ${item.unitPrice.toFixed(2)} 
+              {item.quantity} x Rs.{item.unitPrice.toFixed(2)} 
               {item.discountPercentage > 0 && ` (-${item.discountPercentage}%)`}
             </div>
           </div>
@@ -43,17 +43,17 @@ export default function ReceiptView({ order }) {
       <div className="space-y-1 font-bold">
         <div className="flex justify-between text-gray-600">
           <span>Subtotal:</span>
-          <span>${order.subtotal.toFixed(2)}</span>
+          <span>Rs.{order.subtotal.toFixed(2)}</span>
         </div>
         {order.totalDiscount > 0 && (
           <div className="flex justify-between text-red-500">
             <span>Discount Applied:</span>
-            <span>-${order.totalDiscount.toFixed(2)}</span>
+            <span>-Rs.{order.totalDiscount.toFixed(2)}</span>
           </div>
         )}
         <div className="flex justify-between text-sm font-black pt-1">
           <span>NET TOTAL:</span>
-          <span>${order.netTotal.toFixed(2)}</span>
+          <span>Rs.{order.netTotal.toFixed(2)}</span>
         </div>
       </div>
       
@@ -69,11 +69,11 @@ export default function ReceiptView({ order }) {
           <>
             <div className="flex justify-between">
               <span>Cash Tendered:</span>
-              <span>${order.cashReceived?.toFixed(2)}</span>
+              <span>Rs.{order.cashReceived?.toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-bold text-black">
               <span>Change Returned:</span>
-              <span>${order.changeGiven?.toFixed(2)}</span>
+              <span>Rs.{order.changeGiven?.toFixed(2)}</span>
             </div>
           </>
         )}

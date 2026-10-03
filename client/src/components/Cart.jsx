@@ -254,14 +254,14 @@ useEffect(() => {
                   >
                     <td className="p-4 font-bold text-[#0D1B2A]">{product.item}</td>
                     <td className="p-4 text-center font-medium text-gray-700">{product.quantity}</td>
-                    <td className="p-4 text-center font-medium text-gray-700">${Number(product.price).toFixed(2)}</td>
+                    <td className="p-4 text-center font-medium text-gray-700">Rs.{Number(product.price).toFixed(2)}</td>
                     <td className="p-4 text-center">
                       <span className="bg-blue-50 text-[#0070F3] font-semibold px-2 py-0.5 rounded-md text-xs">
                         {product.discount}%
                       </span>
                     </td>
                     <td className="p-4 text-right pr-6 font-bold text-[#0D1B2A]">
-                      ${finalItemTotal.toFixed(2)}
+                      Rs.{finalItemTotal.toFixed(2)}
                     </td>
                   </tr>
                 );
@@ -284,7 +284,7 @@ useEffect(() => {
         {cartItems.length > 0 && (
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between">
             <span className="text-gray-500 font-medium text-sm">Estimated Total Amount</span>
-            <span className="text-2xl font-black text-[#0D1B2A]">${currentTotal.toFixed(2)}</span>
+            <span className="text-2xl font-black text-[#0D1B2A]">Rs.{currentTotal.toFixed(2)}</span>
           </div>
         )}
       </div>

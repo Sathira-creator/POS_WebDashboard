@@ -67,7 +67,7 @@ const ReportPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard 
           label="Total Sales" 
-          value={`$${(sales || 0).toFixed(2)}`} 
+          value={`Rs.${(sales || 0).toFixed(2)}`} 
           color="bg-emerald-50 border border-emerald-100" 
           icon="💰" 
           textColor="text-emerald-600" 
@@ -83,7 +83,7 @@ const ReportPage = () => {
         />
         <StatCard 
           label="Average Order Value" 
-          value={`$${(aov || 0).toFixed(2)}`} 
+          value={`Rs.${(aov || 0).toFixed(2)}`} 
           color="bg-blue-50 border border-blue-100" 
           icon="%" 
           textColor="text-blue-600" 
