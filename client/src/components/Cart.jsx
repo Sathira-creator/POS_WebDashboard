@@ -31,58 +31,98 @@ const Cart = () => {
     };
 
     // 1. Fetch Cart Data & Setup Socket.io Real-Time Synchronization
-    useEffect(() => {
-      const activeShopId = localStorage.getItem('activeShopId') || localStorage.getItem('shopId') || localStorage.getItem('currentShop');
-      const employeeId = user?._id || user?.id;
+    // useEffect(() => {
+    //   const activeShopId = localStorage.getItem('activeShopId') || localStorage.getItem('shopId') || localStorage.getItem('currentShop');
+    //   const employeeId = user?._id || user?.id;
 
-      if (!activeShopId || !employeeId) return; 
+    //   if (!activeShopId || !employeeId) return; 
 
-      const fetchCart = async () => {
-        try {
-          const { data } = await axios.get('/api/pos/current', {
-            headers: getHeaders(),
-            withCredentials: true
-          });
-          if (data.success && data.cart && data.cart.items) {
-            const mapped = data.cart.items.map(item => ({
-              id: item.productId?._id || item.productId,
-              item: item.itemName || item.productId?.name,
-              price: item.unitPrice,
-              quantity: item.quantity,
-              discount: item.discountPercentage || 0
-            }));
-            setCartItems(mapped);
-          }
-        } catch (error) {
-          setCartItems([]);
-        }
-      };
+    //   const fetchCart = async () => {
+    //     try {
+    //       const { data } = await axios.get('/api/pos/current', {
+    //         headers: getHeaders(),
+    //         withCredentials: true
+    //       });
+    //       if (data.success && data.cart && data.cart.items) {
+    //         const mapped = data.cart.items.map(item => ({
+    //           id: item.productId?._id || item.productId,
+    //           item: item.itemName || item.productId?.name,
+    //           price: item.unitPrice,
+    //           quantity: item.quantity,
+    //           discount: item.discountPercentage || 0
+    //         }));
+    //         setCartItems(mapped);
+    //       }
+    //     } catch (error) {
+    //       setCartItems([]);
+    //     }
+    //   };
 
-      fetchCart();
+    //   fetchCart();
 
-      const socket = io('https://pos-web-dashboard-583g.vercel.app', { withCredentials: true });
+    //   const socket = io('https://pos-web-dashboard-583g.vercel.app', { withCredentials: true });
 
-      socket.emit('join_employee_cart', { shopId: activeShopId, employeeId });
+    //   socket.emit('join_employee_cart', { shopId: activeShopId, employeeId });
 
-      socket.on('cart_updated', (updatedCart) => {
-        if (updatedCart && updatedCart.items) {
-          const mapped = updatedCart.items.map(item => ({
-            id: item.productId?._id || item.productId,
-            item: item.itemName || item.productId?.name,
-            price: item.unitPrice,
-            quantity: item.quantity,
-            discount: item.discountPercentage || 0
-          }));
-          setCartItems(mapped);
-        } else {
-          setCartItems([]); 
-        }
+    //   socket.on('cart_updated', (updatedCart) => {
+    //     if (updatedCart && updatedCart.items) {
+    //       const mapped = updatedCart.items.map(item => ({
+    //         id: item.productId?._id || item.productId,
+    //         item: item.itemName || item.productId?.name,
+    //         price: item.unitPrice,
+    //         quantity: item.quantity,
+    //         discount: item.discountPercentage || 0
+    //       }));
+    //       setCartItems(mapped);
+    //     } else {
+    //       setCartItems([]); 
+    //     }
+    //   });
+
+    //   return () => {
+    //     socket.disconnect();
+    //   };
+    // }, [user]);
+
+    // 1. Fetch Cart Data via 1-second Polling Interval
+useEffect(() => {
+  const activeShopId = localStorage.getItem('activeShopId') || localStorage.getItem('shopId') || localStorage.getItem('currentShop');
+  const employeeId = user?._id || user?.id;
+
+  if (!activeShopId || !employeeId) return; 
+
+  const fetchCart = async () => {
+    try {
+      const { data } = await axios.get('/api/pos/current', {
+        headers: getHeaders(),
+        withCredentials: true
       });
+      if (data.success && data.cart && data.cart.items) {
+        const mapped = data.cart.items.map(item => ({
+          id: item.productId?._id || item.productId,
+          item: item.itemName || item.productId?.name,
+          price: item.unitPrice,
+          quantity: item.quantity,
+          discount: item.discountPercentage || 0
+        }));
+        setCartItems(mapped);
+      } else {
+        setCartItems([]);
+      }
+    } catch (error) {
+      // Silently handle polling errors so it doesn't spam toasts
+    }
+  };
 
-      return () => {
-        socket.disconnect();
-      };
-    }, [user]);
+  // Fetch immediately on mount
+  fetchCart();
+
+  // Poll every 1 second (1000ms)
+  const intervalId = setInterval(fetchCart, 1000);
+
+  // Clean up the interval when the component unmounts
+  return () => clearInterval(intervalId);
+}, [user]);
 
     const formattedItems = cartItems.map((product) => ({
       productId: product.id, 
