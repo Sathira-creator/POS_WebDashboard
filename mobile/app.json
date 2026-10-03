@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MerchGrid",
-    "slug": "AI integrated merch store",
+    "slug": "ai-integrated-merch-store",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/merchgrid.png",
@@ -15,12 +15,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#208AEF",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.sathirat.aiintegratedmerchstore"
     },
     "web": {
       "output": "static",
@@ -38,9 +43,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0D1B2A",
           "image": "./assets/images/logo-glow.png",
-          "imageWidth": 76
+          "imageWidth": 120,
+          "resizeMode": "contain"
         }
       ],
       "expo-image",
@@ -50,6 +56,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ba926a1a-7ff1-46eb-938a-34043f88de5a"
+      }
     }
   }
 }

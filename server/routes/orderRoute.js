@@ -11,14 +11,14 @@ orderRouter.post('/create',authUser, verifyShopAccess,  createOrder);
 
 orderRouter.get('/public/:id', async (req, res) => {
     try {
-        // Look up the order using the database ID passed in the URL parameters
-        const order = await Order.findById(req.params.id);
+        // Look up the order and populate the 'shop' reference to get name and address
+        const order = await Order.findById(req.params.id).populate('shop', 'name address district city');
         
         if (!order) {
-        return res.status(404).json({ success: false, message: 'Receipt not found.' });
+            return res.status(404).json({ success: false, message: 'Receipt not found.' });
         }
         
-        // Return the order document cleanly to the public React screen
+        // Return the order document (which now includes populated shop details)
         return res.status(200).json({ success: true, order });
     } catch (error) {
         console.error("Public receipt fetch error:", error.message);
